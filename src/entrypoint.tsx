@@ -35,15 +35,62 @@ if ($$webpack_dev && (module as HMRModule).hot) {
 }
 
 import {Greeting} from "./components/demo";
+import {observer} from "mobx-react";
+import {observable, computed} from "mobx";
+class Todo {
+  id = Math.random();
+  @observable title:any;
+  @observable finished = false;
+  constructor(title:any) {
+    this.title = title;
+  }
+}
+
+class TodoList {
+  @observable todos:any[] = [];
+  @computed get unfinishedTodoCount() {
+    return this.todos.filter(todo => !todo.finished).length;
+  }
+}
+
+@observer 
+class TodoListView extends React.Component<{todoList: any}> {
+  render() {
+    return (
+      <div>
+        <ul>
+          {this.props.todoList.todos.map((todo:any) => (
+            <TodoView todo={todo} key={todo.id} />
+          ))}
+        </ul>
+        Tasks left: {this.props.todoList.unfinishedTodoCount}
+      </div>
+    );
+  }
+}
+
+const TodoView = observer(({ todo }: {todo:any}) => (
+  <li>
+    <input
+      type="checkbox"
+      checked={todo.finished}
+      onClick={() => (todo.finished = !todo.finished)}
+    />
+    {todo.title}
+  </li>
+));
+
+const store = new TodoList();
+
+
 ReactDOM.render(
-    <Greeting name="heartblood">
-        <div data-position="top">hello</div>
-    </Greeting>,
+    <TodoListView todoList={store} />,
     document.getElementById("app")
 );
 
 import WxSdk from "@/assets/js/jweixin";
 
-console.log(2131);
 
+store.todos.push(new Todo('Get Coffee'), new Todo('Write simpler code'));
+store.todos[0].finished = true;
 console.log(WxSdk);

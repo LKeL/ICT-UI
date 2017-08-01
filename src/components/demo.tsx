@@ -6,6 +6,7 @@
 
 import * as React from "react";
 import * as className from "./style/demo.less";
+import {observer} from "mobx-react";
 
 import ProgressBar from "@/components/ProgressBar/ProgressBar";
 import Spinner from "@/components/Spinner/Spinner";
@@ -26,6 +27,7 @@ interface StateTypes {
  * @class
  * @param {string} name - the name of creater.
  */
+@observer
 export class Greeting extends React.Component<{ name: String }, StateTypes> {
     constructor() {
         super();
